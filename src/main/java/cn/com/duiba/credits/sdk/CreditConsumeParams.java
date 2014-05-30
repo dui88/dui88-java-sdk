@@ -1,4 +1,4 @@
-package com.dui88.credits.sdk;
+package cn.com.duiba.credits.sdk;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -8,11 +8,12 @@ import java.util.Map;
 public class CreditConsumeParams {
 
 	private String appKey;
-	private Date timestamp;
-	private Integer credits;
-	private String orderNum;
+	private Date timestamp;//时间戳
+	private Integer credits;//消耗积分数
+	private String orderNum;//兑吧订单号
 	private String description;
 	private String uid;
+	private boolean waitAudit=false;//是否等待审核， 如果返回true，表示此订单需要审核，审核通过后才会继续下去。 如果返回false表示此订单无须审核，会直接继续兑换流程
 	public Integer getCredits() {
 		return credits;
 	}
@@ -44,6 +45,7 @@ public class CreditConsumeParams {
 		map.put("description", description);
 		map.put("uid", uid);
 		map.put("appKey", appKey);
+		map.put("waitAudit", waitAudit+"");
 		map.put("appSecret", appSecret);
 		map.put("timestamp", timestamp.getTime()+"");
 		map.put("orderNum", orderNum);
@@ -65,5 +67,11 @@ public class CreditConsumeParams {
 	}
 	public void setOrderNum(String orderNum) {
 		this.orderNum = orderNum;
+	}
+	public boolean isWaitAudit() {
+		return waitAudit;
+	}
+	public void setWaitAudit(boolean waitAudit) {
+		this.waitAudit = waitAudit;
 	}
 }

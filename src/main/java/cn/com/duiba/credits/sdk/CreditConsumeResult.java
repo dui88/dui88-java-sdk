@@ -1,4 +1,4 @@
-package com.dui88.credits.sdk;
+package cn.com.duiba.credits.sdk;
 
 public class CreditConsumeResult {
 

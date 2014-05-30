@@ -1,6 +1,8 @@
-package com.dui88.credits.sdk;
+package cn.com.duiba.credits.sdk;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,6 +14,43 @@ public class CreditTool {
 		this.appKey=appKey;
 		this.appSecret=appSecret;
 	}
+	/**
+	 * 构建在兑吧商城自动登录的url地址
+	 * @param uid 用户id
+	 * @param credits 用户积分余额
+	 * @return 自动登录的url地址
+	 */
+	public String buildCreditAutoLoginRequest(String uid,int credits){
+		String url="http://www.duiba.com.cn/autoLogin/autologin?";
+		Map<String, String> params=new HashMap<String, String>();
+		params.put("uid", uid);
+		params.put("credits", credits+"");
+		params.put("appSecret", appSecret);
+		params.put("appKey", appKey);
+		String sign=SignTool.sign(params);
+		url+="uid="+uid+"&credits="+credits+"&appKey="+appKey+"&sign="+sign;
+		return url;
+	}
+	/**
+	 * 构建开发者审核结果的的方法
+	 * @param params
+	 * @return 发起请求的url
+	 */
+	public String buildCreditAuditRequest(CreditAuditParams params){
+		String url="http://www.duiba.com.cn/audit/apiAudit?";
+		Map<String, String> signParams=new HashMap<String, String>();
+		signParams.put("appKey", appKey);
+		signParams.put("appSecret", appSecret);
+		signParams.put("passOrderNums", params.getPassOrderNums().toString());
+		signParams.put("rejectOrderNums", params.getRejectOrderNums().toString());
+		String sign=SignTool.sign(signParams);
+		
+		url+="appKey="+appKey+"&passOrderNums="+signParams.get("passOrderNums")+"&rejectOrderNums="+signParams.get("rejectOrderNums")+"&sign="+sign;
+		return url;
+	}
+	
+	
+	
 	/**
 	 * 积分余额查询的解析方法
 	 * @param request

@@ -1,4 +1,4 @@
-package com.dui88.credits.sdk;
+package cn.com.duiba.credits.sdk;
 
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
@@ -52,7 +52,11 @@ public class SignTool {
 		}
 		return hexValue.toString();
 	}
-	
+	/**
+	 * 
+	 * @param params
+	 * @return
+	 */
 	public static String sign(Map<String,String> params){
 		List<String> keys=new ArrayList<String>(params.keySet());
 		Collections.sort(keys);
