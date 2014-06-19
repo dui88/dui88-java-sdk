@@ -21,7 +21,7 @@ public class CreditTool {
 	 * @return 自动登录的url地址
 	 */
 	public String buildCreditAutoLoginRequest(String uid,int credits){
-		String url="http://www.duiba.com.cn/autoLogin/autologin?";
+		String url="http://www.dui88.com/autoLogin/autologin?";
 		Map<String, String> params=new HashMap<String, String>();
 		params.put("uid", uid);
 		params.put("credits", credits+"");
@@ -37,12 +37,32 @@ public class CreditTool {
 	 * @return 发起请求的url
 	 */
 	public String buildCreditAuditRequest(CreditAuditParams params){
-		String url="http://www.duiba.com.cn/audit/apiAudit?";
+		String url="http://www.dui88.com/audit/apiAudit?";
 		Map<String, String> signParams=new HashMap<String, String>();
 		signParams.put("appKey", appKey);
 		signParams.put("appSecret", appSecret);
-		signParams.put("passOrderNums", params.getPassOrderNums().toString());
-		signParams.put("rejectOrderNums", params.getRejectOrderNums().toString());
+		if(params.getPassOrderNums().size()>0){
+			String s=null;
+			for(String o:params.getPassOrderNums()){
+				if(s==null){
+					s=o;
+				}else{
+					s+=","+o;
+				}
+			}
+			signParams.put("passOrderNums", s);
+		}
+		if(params.getRejectOrderNums().size()>0){
+			String s=null;
+			for(String o:params.getRejectOrderNums()){
+				if(s==null){
+					s=o;
+				}else{
+					s+=","+o;
+				}
+			}
+			signParams.put("rejectOrderNums", s);
+		}
 		String sign=SignTool.sign(signParams);
 		
 		url+="appKey="+appKey+"&passOrderNums="+signParams.get("passOrderNums")+"&rejectOrderNums="+signParams.get("rejectOrderNums")+"&sign="+sign;
@@ -123,5 +143,32 @@ public class CreditTool {
 		params.setBizId(request.getParameter("bizId"));
 		return params;
 	}
+	/**
+	 * 需要审核的兑换 的解析方法
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	public CreditNeedAuditParams parseCreditAudit(HttpServletRequest request) throws Exception{
+		if(!appKey.equals(request.getParameter("appKey"))){
+			throw new Exception("appKey不匹配");
+		}
+		if(request.getParameter("timestamp")==null){
+			throw new Exception("请求中没有带时间戳");
+		}
+		boolean verify=SignTool.signVerify(appSecret, request);
+		if(!verify){
+			throw new Exception("签名验证失败");
+		}
+		
+		CreditNeedAuditParams params=new CreditNeedAuditParams();
+		params.setAppKey(appKey);
+		params.setTimestamp(new Date(Long.valueOf(request.getParameter("timestamp"))));
+		params.setBizId(request.getParameter("bizId"));
+		
+		return params;
+	}
+	
+	
 	
 }
